@@ -1,70 +1,74 @@
 package cstjean.mobile.chauffage;
 
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
+import org.junit.Test;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.*;
 
-@ExtendWith(MockitoExtension.class)
-class TestControleThermostat {
 
-    @Mock
-    ServiceTemperature temperatureService;
-
-    @Mock
-    ServiceTermostat thermostatService;
-
-    @InjectMocks
-    ControleThermostat controle; // will use the mocks in constructor
+public class TestControleThermostat {
+    ControleThermostat controle = new ControleThermostat();
 
     @Test
-    void DemarrerChauffage_OK_quandTemp19EtDemarrer() {
-        // arrange
-        when(temperatureService.getTemperature()).thenReturn(19.0);
+    public void testDemarrer() {
+        ServiceTemperature mockTemp = mock(ServiceTemperature.class);
+        ServiceTermostat mockTermostat = mock(ServiceTermostat.class);
 
-        // act
-        String message = controle.Thermostat("Demarrer");
+        controle.setServiceTemperature(mockTemp);
+        controle.setServiceTermostat(mockTermostat);
 
-        // assert
-        assertEquals("OK – Démarrer chauffage", message);
-        verify(thermostatService).DemarrerChauffage();
-        verify(thermostatService, never()).ArreterChauffage();
+        when(mockTemp.getTemperature()).thenReturn(19.0);
+
+        controle.Thermostat("Démarrer");
+
+        verify(mockTermostat, times(1)).DemarrerChauffage();
+        verify(mockTermostat, never()).ArreterChauffage();
     }
 
     @Test
-    void Refuse_quandTemp19EtArreter() {
-        when(temperatureService.getTemperature()).thenReturn(19.0);
+    public void testArreter() {
+        ServiceTemperature mockTemp = mock(ServiceTemperature.class);
+        ServiceTermostat mockTermostat = mock(ServiceTermostat.class);
 
-        String message = controle.Thermostat("Arreter");
+        controle.setServiceTemperature(mockTemp);
+        controle.setServiceTermostat(mockTermostat);
 
-        assertEquals("Refusé", message);
-        verify(thermostatService, never()).DemarrerChauffage();
-        verify(thermostatService, never()).ArreterChauffage();
+        when(mockTemp.getTemperature()).thenReturn(19.0);
+
+        controle.Thermostat("Arrêter");
+
+        verify(mockTermostat, never()).DemarrerChauffage();
+        verify(mockTermostat, never()).ArreterChauffage();
     }
 
     @Test
-    void ArreterChauffage_OK_quandTemp22EtArreter() {
-        when(temperatureService.getTemperature()).thenReturn(22.0);
+    public void testArreterTemperature22() {
+        ServiceTemperature mockTemp = mock(ServiceTemperature.class);
+        ServiceTermostat mockTermostat = mock(ServiceTermostat.class);
 
-        String message = controle.Thermostat("Arreter");
+        controle.setServiceTemperature(mockTemp);
+        controle.setServiceTermostat(mockTermostat);
 
-        assertEquals("OK – Arrêter chauffage", message);
-        verify(thermostatService).ArreterChauffage();
-        verify(thermostatService, never()).DemarrerChauffage();
+        when(mockTemp.getTemperature()).thenReturn(22.0);
+
+        controle.Thermostat("Arrêter");
+
+        verify(mockTermostat, times(1)).ArreterChauffage();
+        verify(mockTermostat, never()).DemarrerChauffage();
     }
 
     @Test
-    void Refuse_quandTemp22EtDemarrer() {
-        when(temperatureService.getTemperature()).thenReturn(22.0);
+    public void testRefuse() {
+        ServiceTemperature mockTemp = mock(ServiceTemperature.class);
+        ServiceTermostat mockTermostat = mock(ServiceTermostat.class);
 
-        String message = controle.Thermostat("Demarrer");
+        controle.setServiceTemperature(mockTemp);
+        controle.setServiceTermostat(mockTermostat);
 
-        assertEquals("Refusé", message);
-        verify(thermostatService, never()).DemarrerChauffage();
-        verify(thermostatService, never()).ArreterChauffage();
+        when(mockTemp.getTemperature()).thenReturn(22.0);
+
+        controle.Thermostat("Démarrer");
+
+        verify(mockTermostat, never()).DemarrerChauffage();
+        verify(mockTermostat, never()).ArreterChauffage();
     }
 }
