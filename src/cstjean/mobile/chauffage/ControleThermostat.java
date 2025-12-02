@@ -16,11 +16,9 @@ public class ControleThermostat {
 
     public String Thermostat(String actionDemandee) {
         double temperature = Math.round(serviceTemperature.getTemperature());
-        boolean demarrer = temperature < 21;
-        boolean arreter = temperature > 21;
 
-        if (demarrer) {
-            if (actionDemandee.equals("Démarrer")) {
+        if (actionDemandee.equals("Démarrer")) {
+            if (temperature < 21) {
                 serviceTermostat.DemarrerChauffage();
                 return "OK – Démarrer chauffage";
             } else {
@@ -28,8 +26,8 @@ public class ControleThermostat {
             }
         }
 
-        if (arreter) {
-            if (actionDemandee.equals("Arrêter")) {
+        if (actionDemandee.equals("Arrêter")) {
+            if (temperature >= 21) {
                 serviceTermostat.ArreterChauffage();
                 return "OK – Arrêter chauffage";
             } else {
@@ -39,4 +37,5 @@ public class ControleThermostat {
 
         return "Refusé";
     }
+
 }

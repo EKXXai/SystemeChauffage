@@ -2,6 +2,7 @@ package cstjean.mobile.chauffage;
 
 import org.junit.Test;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.*;
 
 
@@ -70,5 +71,22 @@ public class TestControleThermostat {
 
         verify(mockTermostat, never()).DemarrerChauffage();
         verify(mockTermostat, never()).ArreterChauffage();
+    }
+
+    @Test
+    public void testActionInconnue() {
+        ServiceTemperature mockTemp = mock(ServiceTemperature.class);
+        ServiceTermostat mockTermostat = mock(ServiceTermostat.class);
+
+        controle.setServiceTemperature(mockTemp);
+        controle.setServiceTermostat(mockTermostat);
+
+        when(mockTemp.getTemperature()).thenReturn(22.0);
+
+        String result = controle.Thermostat("Pause");
+
+        verify(mockTermostat, never()).DemarrerChauffage();
+        verify(mockTermostat, never()).ArreterChauffage();
+        assertEquals("Refusé", result);
     }
 }
