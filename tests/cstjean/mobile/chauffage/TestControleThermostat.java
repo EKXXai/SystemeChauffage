@@ -19,10 +19,10 @@ public class TestControleThermostat {
 
         when(mockTemp.getTemperature()).thenReturn(19.0);
 
-        controle.Thermostat("Démarrer");
+        controle.thermostat("Démarrer");
 
-        verify(mockTermostat, times(1)).DemarrerChauffage();
-        verify(mockTermostat, never()).ArreterChauffage();
+        verify(mockTermostat, times(1)).demarrerChauffage();
+        verify(mockTermostat, never()).arreterChauffage();
     }
 
     @Test
@@ -35,10 +35,10 @@ public class TestControleThermostat {
 
         when(mockTemp.getTemperature()).thenReturn(19.0);
 
-        controle.Thermostat("Arrêter");
+        controle.thermostat("Arrêter");
 
-        verify(mockTermostat, never()).DemarrerChauffage();
-        verify(mockTermostat, never()).ArreterChauffage();
+        verify(mockTermostat, never()).demarrerChauffage();
+        verify(mockTermostat, never()).arreterChauffage();
     }
 
     @Test
@@ -51,10 +51,10 @@ public class TestControleThermostat {
 
         when(mockTemp.getTemperature()).thenReturn(22.0);
 
-        controle.Thermostat("Arrêter");
+        controle.thermostat("Arrêter");
 
-        verify(mockTermostat, times(1)).ArreterChauffage();
-        verify(mockTermostat, never()).DemarrerChauffage();
+        verify(mockTermostat, times(1)).arreterChauffage();
+        verify(mockTermostat, never()).demarrerChauffage();
     }
 
     @Test
@@ -67,10 +67,10 @@ public class TestControleThermostat {
 
         when(mockTemp.getTemperature()).thenReturn(22.0);
 
-        controle.Thermostat("Démarrer");
+        controle.thermostat("Démarrer");
 
-        verify(mockTermostat, never()).DemarrerChauffage();
-        verify(mockTermostat, never()).ArreterChauffage();
+        verify(mockTermostat, never()).demarrerChauffage();
+        verify(mockTermostat, never()).arreterChauffage();
     }
 
     @Test
