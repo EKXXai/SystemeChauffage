@@ -40,7 +40,6 @@ public class ControleThermostat {
      * par l'utilisateur ou le système ("Démarrer" ou "Arrêter").
      * - Si la température arrondie est < 21°C alors le chauffage peut démarrer.
      * - Si la température arrondie est > 21°C alors le chauffage peut s'arrêter.
-     * - Si la température est exactement 21°C → aucune action.
      *
      * @param actionDemandee "Démarrer" ou "Arrêter"
      */
