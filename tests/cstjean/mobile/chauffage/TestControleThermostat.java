@@ -1,13 +1,22 @@
 package cstjean.mobile.chauffage;
 
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.*;
-
+/**
+ * Tests unitaires pour la classe ControleThermostat.
+ */
 
 public class TestControleThermostat {
-    ControleThermostat controle = new ControleThermostat();
+
+    /** Instance du contrôleur utilisée pour les tests. */
+
+    private final ControleThermostat controle = new ControleThermostat();
 
     @Test
     public void testDemarrer() {
@@ -74,19 +83,35 @@ public class TestControleThermostat {
     }
 
     @Test
-    public void testActionInconnue() {
+    public void testPremierAppelAccepteToujours() {
         ServiceTemperature mockTemp = mock(ServiceTemperature.class);
         ServiceTermostat mockTermostat = mock(ServiceTermostat.class);
 
         controle.setServiceTemperature(mockTemp);
         controle.setServiceTermostat(mockTermostat);
 
-        when(mockTemp.getTemperature()).thenReturn(22.0);
+        when(mockTemp.getTemperature()).thenReturn(30.0);
 
-        String result = controle.Thermostat("Pause");
+        controle.thermostat("Arrêter");
 
-        verify(mockTermostat, never()).DemarrerChauffage();
-        verify(mockTermostat, never()).ArreterChauffage();
-        assertEquals("Refusé", result);
+        verify(mockTermostat, times(1)).arreterChauffage();
+    }
+
+    @Test
+    public void testVariationTropGrandeIgnore() {
+        ServiceTemperature mockTemp = mock(ServiceTemperature.class);
+        ServiceTermostat mockTermostat = mock(ServiceTermostat.class);
+
+        controle.setServiceTemperature(mockTemp);
+        controle.setServiceTermostat(mockTermostat);
+
+        when(mockTemp.getTemperature()).thenReturn(20.0);
+        controle.thermostat("Démarrer");   // première — acceptée
+
+        when(mockTemp.getTemperature()).thenReturn(21.0); // saut = 1.0 > 0.5
+        controle.thermostat("Arrêter");
+
+        verify(mockTermostat, times(1)).demarrerChauffage(); // seulement le premier!
+        verify(mockTermostat, never()).arreterChauffage();
     }
 }

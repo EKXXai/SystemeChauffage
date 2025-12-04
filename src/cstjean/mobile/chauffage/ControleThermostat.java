@@ -14,6 +14,9 @@ public class ControleThermostat {
     /** Service qui fournit la température actuelle. */
     private ServiceTermostat serviceTermostat;
 
+    /** Dernière température acceptée (0 si aucune). */
+    private Double derniereTemperature = null;
+
     /**
      * Injection du service de température.
      *
@@ -35,18 +38,31 @@ public class ControleThermostat {
     /**
      * Méthode principale du contrôleur. Elle reçoit une action demandée
      * par l'utilisateur ou le système ("Démarrer" ou "Arrêter").
-     *  - Si la température arrondie est < 21°C alors le chauffage peut démarrer.
-     *  - Si la température arrondie est > 21°C alors le chauffage peut s'arrêter.
-     *  - Si la température est exactement 21°C → aucune action.
+     * - Si la température arrondie est < 21°C alors le chauffage peut démarrer.
+     * - Si la température arrondie est > 21°C alors le chauffage peut s'arrêter.
+     * - Si la température est exactement 21°C → aucune action.
      *
      * @param actionDemandee "Démarrer" ou "Arrêter"
      */
     public void thermostat(String actionDemandee) {
-        // Température actuelle arrondie (évite les valeurs 20.9 par exemple)
-        double temperature = Math.round(serviceTemperature.getTemperature());
+        double temperature = serviceTemperature.getTemperature();
+
+        // Si c'est la première valeur → on l'accepte automatiquement.
+        if (derniereTemperature == null) {
+            derniereTemperature = temperature;
+        }
+
+        // Vérifier la variation maximale de 0.5°C
+        if (Math.abs(temperature - derniereTemperature) > 0.5) {
+            // Variation trop grande → on ignore l'action
+            return;
+        }
+
+        // On accepte la valeur → on la remplace
+        derniereTemperature = temperature;
 
         boolean demarrer = temperature < 21;    // Trop froid → possibilité de démarrer
-        boolean arreter = temperature > 21;     // Trop chaud → possibilité d'arrêter
+        boolean arreter = temperature >= 21;    // Trop chaud → possibilité d'arrêter
 
         // Si on peut démarrer et que l'utilisateur a effectivement demandé de démarrer
         if (demarrer) {
